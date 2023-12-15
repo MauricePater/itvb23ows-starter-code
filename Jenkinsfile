@@ -3,8 +3,8 @@ pipeline {
     stages {
         stage('build') {
             steps {
-                sh 'composer install'
                 sh 'php bin/console cache:warmup'
+                sh 'php --version'
             }
         }
     }
