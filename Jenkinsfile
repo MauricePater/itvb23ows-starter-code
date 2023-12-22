@@ -6,6 +6,12 @@ pipeline {
                 sh 'php --version'
             }
         }
+        stage('SonarQube') {
+            steps {
+                script { scannerHome = tool 'scanner' }
+                withSonarQubeEnv('SonarQube') { sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=hive" }
+            }
+        }
     }
     post {
         always {
