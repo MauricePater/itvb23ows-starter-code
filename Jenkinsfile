@@ -1,11 +1,6 @@
 pipeline {
-    agent { docker { image 'composer/composer' } }
+    agent { label '!windows' }
     stages {
-        stage('build') {
-            steps {
-                sh 'php --version'
-            }
-        }
         stage('SonarQube') {
             steps {
                 script { scannerHome = tool 'SonarQube Scanner' }
