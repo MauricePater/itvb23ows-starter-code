@@ -3,7 +3,7 @@ FROM mysql:latest
 WORKDIR /docker-entrypoint-initdb.d
 COPY hive.sql /docker-entrypoint-initdb.d
 
-ENV MYSQL_ROOT_PASSWORD=hive
+ENV MYSQL_ROOT_PASSWORD=hive_password_123
 ENV MYSQL_DATABASE=hive_database
 
 EXPOSE 3306
