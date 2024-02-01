@@ -1,0 +1,19 @@
+{
+    "name": "mauricepater/hive",
+    "description": "hive project",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Hive\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Maurice",
+            "email": "m.r.pater@st.hanze.nl"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
