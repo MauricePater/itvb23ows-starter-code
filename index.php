@@ -1,10 +1,12 @@
 <?php
     session_start();
 
-    include_once 'util.php';
+    require_once __DIR__ . '/vendor/autoload.php';
+    include_once __DIR__ . '/src/util.php';
+
 
     if (!isset($_SESSION['board'])) {
-        header('Location: restart.php');
+        header('Location: src/Board/Restart.php');
         exit(0);
     }
     $board = $_SESSION['board'];
@@ -124,7 +126,7 @@
         <div class="turn">
             Turn: <?php if ($player == 0) { echo "White"; } else { echo "Black"; } ?>
         </div>
-        <form method="post" action="play.php">
+        <form method="post" action="src/Board/play.php">
             <select name="piece">
                 <?php
                     foreach ($hand[$player] as $tile => $ct) {
@@ -141,7 +143,7 @@
             </select>
             <input type="submit" value="Play">
         </form>
-        <form method="post" action="move.php">
+        <form method="post" action="src/Board/move.php">
             <select name="from">
                 <?php
                     foreach (array_keys($board) as $pos) {
@@ -158,17 +160,20 @@
             </select>
             <input type="submit" value="Move">
         </form>
-        <form method="post" action="pass.php">
+        <form method="post" action="src/Board/pass.php">
             <input type="submit" value="Pass">
         </form>
-        <form method="post" action="restart.php">
+        <form method="post" action="src/Board/Restart.php">
             <input type="submit" value="Restart">
         </form>
         <strong><?php if (isset($_SESSION['error'])) { echo $_SESSION['error']; unset($_SESSION['error']); } ?></strong>
         <ol>
             <?php
-                $db = include_once 'database.php';
-                $stmt = $db->prepare('SELECT * FROM moves WHERE game_id = '.$_SESSION['game_id']);
+                use Hive\Database\Database;
+                
+                $db = new Database();
+                $connection = $db->getDatabase();
+                $stmt = $connection->prepare('SELECT * FROM moves WHERE game_id = '.$_SESSION['game_id']);
                 $stmt->execute();
                 $result = $stmt->get_result();
                 while ($row = $result->fetch_array()) {
@@ -176,7 +181,7 @@
                 }
             ?>
         </ol>
-        <form method="post" action="undo.php">
+        <form method="post" action=src/Board/undo.php">
             <input type="submit" value="Undo">
         </form>
     </body>

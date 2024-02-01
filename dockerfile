@@ -1,11 +1,11 @@
-FROM php:latest
+FROM composer:latest
+
+COPY / /hive
 
 WORKDIR /hive
 
-COPY *.php /hive
-
-RUN apt-get update -y
 RUN docker-php-ext-install mysqli
+RUN composer dump-autoload -o
 
 EXPOSE 8000
 
