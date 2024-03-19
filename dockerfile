@@ -1,9 +1,7 @@
 FROM composer:latest
 
 COPY / /hive
-
 WORKDIR /hive
-
 RUN docker-php-ext-install mysqli
 RUN composer dump-autoload -o
 

@@ -1,3 +1,4 @@
+#!/bin/bash
 docker build -t database:1.0 database
 docker build -t hive:1.0 .
 docker network create hive-network
