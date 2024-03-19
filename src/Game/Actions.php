@@ -119,9 +119,12 @@ class Actions{
     }
 
     public function selectPiece($hand){
+        $pieces = [];
         foreach ($hand as $tile => $ct) {
             echo "<option value=\"$tile\">$tile</option>";
+            array_push($pieces, $tile);
         }
+        return $pieces;
     }
     public function fromTile($board){
         foreach (array_keys($board) as $pos) {
