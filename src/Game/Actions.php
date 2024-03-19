@@ -121,8 +121,10 @@ class Actions{
     public function selectPiece($hand){
         $pieces = [];
         foreach ($hand as $tile => $ct) {
+            if($ct > 0){
             echo "<option value=\"$tile\">$tile</option>";
             array_push($pieces, $tile);
+            }
         }
         return $pieces;
     }
