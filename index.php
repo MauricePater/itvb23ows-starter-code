@@ -4,9 +4,11 @@
     require_once __DIR__ . '/vendor/autoload.php';
 
     use Hive\Game\Actions;
+    use Hive\Game\Logic;
     use Hive\Game\Board;
 
     $actions = new Actions();
+    $logic = new Logic();
     $view = new Board();
 
     if (!isset($_SESSION['board'])) {
@@ -15,22 +17,12 @@
     $board = $_SESSION['board'];
     $player = $_SESSION['player'];
     $hand = $_SESSION['hand'];
-
-    $to = [];
-    foreach ($GLOBALS['OFFSETS'] as $pq) {
-        foreach (array_keys($board) as $pos) {
-            $pq2 = explode(',', $pos);
-            $to[] = ($pq[0] + $pq2[0]).','.($pq[1] + $pq2[1]);
-        }
-    }
-    $to = array_unique($to);
-    if (!count($to)) { $to[] = '0,0'; }
-
+    $to = $logic->boardTiles($board);
     if(isset($_POST['play'])) {
-        $actions->playStone($player, $board, $hand[$player]);
+        $actions->playStone($player, $board, $hand[$player], $_POST['piece'], $_POST['to']);
     }
     if(isset($_POST['move'])) {
-        $actions->moveStone($player, $board, $hand[$player]);
+        $actions->moveStone($player, $board, $hand[$player], $_POST['from'], $_POST['to']);
     }
     if(isset($_POST['pass'])) {
         $actions->passMove();
@@ -66,25 +58,29 @@
                 <?php $actions->selectPiece($hand[$player]); ?>
             </select>
             <select name="to">
-                <?php $actions->toTile($to); ?>
+                <?php $actions->placePiece($hand[$player], $player, $to, $board); ?>
             </select>
             <input type="submit" name="play" value="Play">
         </form>
+
         <form method="post">
             <select name="from">
-                <?php $actions->fromTile($board); ?>
+                <?php $actions->fromTile($board, $player); ?>
             </select>
             <select name="to">
                 <?php $actions->toTile($to); ?>
             </select>
-            <input type="submit" name="move" value="Move">
+            <input type="submit" name="move" value="To">
         </form>
+
         <form method="post">
             <input type="submit" name="pass" value="Pass">
         </form>
+
         <form method="post">
             <input type="submit" name="restart" value="Restart">
         </form>
+
         <strong><?php if (isset($_SESSION['error'])) { echo $_SESSION['error']; unset($_SESSION['error']); } ?></strong>
         <ol>
             <?php $view->drawMoves(); ?>

@@ -12,10 +12,8 @@ define("DB_INSERT", 'insert into moves (game_id, type, move_from, move_to, previ
 
 class Actions{
 
-    public function moveStone($player, $board, $hand){
+    public function moveStone($player, $board, $hand, $from, $to){
         $logic = new Logic();
-        $from = $_POST['from'];
-        $to = $_POST['to'];
         $logic->checkIfTileEmpty($board, $from);
         $logic->checkIfPieceOwned($board, $from, $player);
         $tile = array_pop($board[$from]);
@@ -81,10 +79,8 @@ class Actions{
         $logic->redirect();
     }
 
-    public function playStone($player, $board, $hand){
+    public function playStone($player, $board, $hand, $piece, $to){
         $logic = new Logic();
-        $piece = $_POST['piece'];
-        $to = $_POST['to'];
         $logic->checkIfHandHasPiece($hand, $piece);
         $logic->checkIfTileEmptyForPlacement($board, $to);
         $logic->checkIfQueenMustBePlayed($hand);
@@ -120,22 +116,52 @@ class Actions{
 
     public function selectPiece($hand){
         $pieces = [];
+        echo "\n";
         foreach ($hand as $tile => $ct) {
             if($ct > 0){
+            echo "\n";
             echo "<option value=\"$tile\">$tile</option>";
             array_push($pieces, $tile);
             }
         }
         return $pieces;
     }
-    public function fromTile($board){
-        foreach (array_keys($board) as $pos) {
-            echo "<option value=\"$pos\">$pos</option>";
+
+    public function placePiece($hand, $player, $to, $board){
+        $logic = new Logic();
+        $positions = [];
+        echo "\n";
+        foreach ($to as $pos) {
+            if(array_sum($hand) > 10 && !array_key_exists($pos, $board) ||
+               $logic->neighboursAreSameColor($player, $pos, $board) && !array_key_exists($pos, $board)){
+                echo "\n";
+                echo "<option value=\"$pos\">$pos</option>";
+                array_push($positions, $pos);
+            }
         }
+        return $positions;
+    }
+
+    public function fromTile($board, $player){
+        $positions = [];
+        echo "\n";
+        foreach (array_keys($board) as $pos) {
+            if($player == $board[$pos][0][0]){
+                echo "\n";
+                echo "<option value=\"$pos\">$pos</option>";
+                array_push($positions, $pos);
+            }
+        }
+        return $positions;
     }
     public function toTile($to){
+        $positions = [];
+        echo "\n";
         foreach ($to as $pos) {
+            echo "\n";
             echo "<option value=\"$pos\">$pos</option>";
+            array_push($positions, $pos);
         }
+        return $positions;
     }
 }

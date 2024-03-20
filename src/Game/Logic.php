@@ -65,6 +65,20 @@ class Logic{
         return $commonDistance <= $distance;
     }
 
+
+    public function boardTiles($board){
+    $to = [];
+    foreach ($GLOBALS['OFFSETS'] as $pq) {
+        foreach (array_keys($board) as $pos) {
+            $pq2 = explode(',', $pos);
+            $to[] = ($pq[0] + $pq2[0]).','.($pq[1] + $pq2[1]);
+        }
+    }
+    $to = array_unique($to);
+    if (!count($to)) { $to[] = '0,0'; }
+    return $to;
+    }
+
     public function redirect(){
     header('Location: index.php');
     exit(0);
