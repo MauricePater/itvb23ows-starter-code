@@ -77,6 +77,39 @@ class Logic{
         return $commonDistance <= $distance;
     }
 
+    public function grasshopperJump($board, $from, $to){
+        $fromCoordinates = explode(',', $from);
+        $toCoordinates = explode(',', $to);
+
+        if ($fromCoordinates[0] == $toCoordinates[0]) {
+            $offset = ($fromCoordinates[1] > $toCoordinates[1]) ? [0, -1] : [0, 1];
+        }
+        elseif ($fromCoordinates[1] == $toCoordinates[1]) {
+            $offset = ($fromCoordinates[0] > $toCoordinates[0]) ? [-1, 0] : [1, 0];
+        }
+        elseif ($fromCoordinates[1] == $toCoordinates[1] - ($fromCoordinates[0] - $toCoordinates[0])) {
+            $offset = ($fromCoordinates[0] > $toCoordinates[0]) ? [-1, 1] : [1, -1];
+        }
+        else {
+            return false;
+        }
+
+        $p = $fromCoordinates[0] + $offset[0];
+        $q = $fromCoordinates[1] + $offset[1];
+        $position = $p . "," . $q;
+        $positionCoordinates = [$p, $q];
+
+        while (isset($board[$position])) {
+            $p = $positionCoordinates[0] + $offset[0];
+            $q = $positionCoordinates[1] + $offset[1];
+            $position = $p . "," . $q;
+            $positionCoordinates = [$p, $q];
+            if ($position == $to) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public function boardTiles($board){
         $to = [];
@@ -145,6 +178,10 @@ class Logic{
         if (($tile[1] == "Q" || $tile[1] == "B") && !$this->slide($currentBoard, $from, $to) &&
              !isset($_SESSION['error'])) {
             $_SESSION['error'] = 'Piece must slide';
+        }
+        if (($tile[1] == "G" && !$this->grasshopperJump($board, $from, $to)) &&
+             !isset($_SESSION['error'])) {
+              $_SESSION['error'] = 'Invalid grasshopper jump';
         }
         if (isset($_SESSION['error'])) {
         return isset($board[$from]) ? array_push($board[$from], $tile) : $board[$from] = [$tile];
