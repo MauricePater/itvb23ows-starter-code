@@ -14,11 +14,8 @@ class Actions{
 
     public function moveStone($player, $board, $hand, $from, $to){
         $logic = new Logic();
-        list($tile, $board) = $logic->validMove($player, $board, $hand, $from, $to);
-        if (isset($_SESSION['error'])) {
-        return isset($board[$from]) ? array_push($board[$from], $tile) : $board[$from] = [$tile];
-        }
-        isset($board[$to]) ? array_push($board[$to], $tile) : $board[$to] = [$tile];
+        $board = $logic->validMove($player, $board, $hand, $from, $to);
+        if (isset($_SESSION['error'])) { return; }
         $_SESSION['player'] = 1 - $_SESSION['player'];
         $db = new Database();
         $connection = $db->getDatabase();
@@ -60,9 +57,9 @@ class Actions{
 
     public function playStone($player, $board, $hand, $piece, $to){
         $logic = new Logic();
-        $logic->validPlay($player, $board, $hand, $piece, $to);
+        $board = $logic->validPlay($player, $board, $hand, $piece, $to);
         if (isset($_SESSION['error'])) { return;}
-        $_SESSION['board'][$to] = [[$_SESSION['player'], $piece]];
+        $_SESSION['board'] = $board;
         $_SESSION['hand'][$player][$piece]--;
         $_SESSION['player'] = 1 - $_SESSION['player'];
         $db = new Database();

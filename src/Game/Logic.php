@@ -114,6 +114,9 @@ class Logic{
             !isset($_SESSION['error'])) {
             $_SESSION['error'] = "Board position has opposing neighbour";
         }
+        if (isset($_SESSION['error'])) {return; }
+        $board[$to] = [[$player, $piece]];
+        return $board;
     }
 
     public function validMove($player, $board, $hand, $from, $to){
@@ -125,6 +128,7 @@ class Logic{
         }
         $currentBoard = $board;
         $tile = array_pop($board[$from]);
+        unset($board[$from]);
         $all = $this->getSplitPieces($board);
         if (isset($board[$to]) && $tile[1] != "B" && !isset($_SESSION['error'])) {
             $_SESSION['error'] = 'Tile is not empty';
@@ -142,7 +146,11 @@ class Logic{
              !isset($_SESSION['error'])) {
             $_SESSION['error'] = 'Piece must slide';
         }
-        return array($tile, $board);
+        if (isset($_SESSION['error'])) {
+        return isset($board[$from]) ? array_push($board[$from], $tile) : $board[$from] = [$tile];
+        }
+        isset($board[$to]) ? array_push($board[$to], $tile) : $board[$to] = [$tile];
+        return $board;
     }
 
     public function getSplitPieces($board){

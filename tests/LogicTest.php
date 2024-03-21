@@ -34,4 +34,18 @@ class LogicTest extends TestCase {
         $logic->validPlay(0, $board, $hand, "Q", "0,-3");
         $this->assertTrue(!isset($_SESSION['error']));
     }
+
+    public function testIfPieceMovedAnotherPieceCanBePlaced(): void {
+        $logic = new Logic();
+        unset($_SESSION['error']);
+        $hand = ["Q" => 0, "B" => 0, "S" => 1, "A" => 2, "G" => 3];
+        $board = ["0,0" => [[0, "Q"]],
+                  "0,1" => [[1, "Q"]],
+                  "0,-1" => [[0, "A"]],
+                  "0,2" => [[1, "A"]]];
+        $board = $logic->validMove(0, $board, $hand, "0,-1", "1,-1");
+        $board = $logic->validPlay(1, $board, $hand, "A", "0,3");
+        $logic->validPlay(0, $board, $hand, "A", "0,-1");
+        $this->assertTrue(!isset($_SESSION['error']));
+    }
 }
