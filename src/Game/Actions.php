@@ -14,28 +14,7 @@ class Actions{
 
     public function moveStone($player, $board, $hand, $from, $to){
         $logic = new Logic();
-        $logic->checkIfTileEmpty($board, $from);
-        $logic->checkIfPieceOwned($board, $from, $player);
-        $tile = array_pop($board[$from]);
-        $all = array_keys($board);
-        $queue = [array_shift($all)];
-        while ($queue) {
-            $next = explode(',', array_shift($queue));
-            foreach ($GLOBALS['OFFSETS'] as $pq) {
-                list($p, $q) = $pq;
-                $p += $next[0];
-                $q += $next[1];
-                if (in_array("$p,$q", $all)) {
-                    $queue[] = "$p,$q";
-                    $all = array_diff($all, ["$p,$q"]);
-                }
-            }
-        }
-        $logic->checkIfTileNotEmpty($board, $to, $tile);
-        $logic->checkIfQueenIsPlayed($hand);
-        $logic->checkIfHiveSplit($to, $board, $all);
-        $logic->checkIfHaveToMove($from, $to);
-        $logic->checkIfHaveToSlide($tile, $board, $from, $to);
+        list($tile, $board) = $logic->validMove($player, $board, $hand, $from, $to);
         if (isset($_SESSION['error'])) {
         return isset($board[$from]) ? array_push($board[$from], $tile) : $board[$from] = [$tile];
         }
@@ -81,11 +60,7 @@ class Actions{
 
     public function playStone($player, $board, $hand, $piece, $to){
         $logic = new Logic();
-        $logic->checkIfHandHasPiece($hand, $piece);
-        $logic->checkIfTileEmptyForPlacement($board, $to);
-        $logic->checkIfQueenMustBePlayed($hand);
-        $logic->checkIfTileHasNeighbour($board, $to);
-        $logic->checkIfTileneighboursAreSameColor($hand, $player, $to, $board);
+        $logic->validPlay($player, $board, $hand, $piece, $to);
         if (isset($_SESSION['error'])) { return;}
         $_SESSION['board'][$to] = [[$_SESSION['player'], $piece]];
         $_SESSION['hand'][$player][$piece]--;

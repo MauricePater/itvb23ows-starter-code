@@ -5,13 +5,13 @@ use Hive\Game\Actions;
 use Hive\Game\Logic;
 
 class ActionsTest extends TestCase {
-    public function testIfHandHasPiece(): void {
+    public function testIfDropDownHandHasPiece(): void {
         $actions = new Actions();
         $hand = ["Q" => 0, "B" => 2, "S" => 2, "A" => 3, "G" => 3];
         $tiles = $actions->selectPiece($hand);
         $this->assertNotContains("Q", $tiles);
     }
-    public function testIfTileIsEmpty(): void {
+    public function testIfDropDownTileIsEmpty(): void {
         $actions = new Actions();
         $logic = new Logic();
         $hand = ["Q" => 0, "B" => 2, "S" => 2, "A" => 3, "G" => 3];
@@ -21,7 +21,7 @@ class ActionsTest extends TestCase {
         $this->assertNotContains('0,0', $positions);
     }
 
-    public function testIfNeighbourHasSameColor(): void {
+    public function testIfDropDownTileNeighbourHasSameColor(): void {
         $actions = new Actions();
         $logic = new Logic();
         $hand = ["Q" => 0, "B" => 2, "S" => 2, "A" => 3, "G" => 3];
@@ -31,7 +31,7 @@ class ActionsTest extends TestCase {
         $this->assertNotContains('0,2', $positions);
     }
 
-    public function testIfPlayerOwnsPiece(): void {
+    public function testIfDropDownPlayerOwnsPiece(): void {
         $actions = new Actions();
         $board = ["0,0" => [[0, "Q"]], "0,1" => [[1, "Q"]]];
         $from = $actions->fromTile($board, 0);
