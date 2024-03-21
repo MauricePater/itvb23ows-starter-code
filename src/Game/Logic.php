@@ -103,7 +103,7 @@ class Logic{
         if (isset($board[$to]) && !isset($_SESSION['error'])) {
             $_SESSION['error'] = 'Tile is not empty';
         }
-        if (array_sum($hand) <= 8 && $hand['Q'] && !isset($_SESSION['error'])) {
+        if (array_sum($hand) <= 8 && $hand['Q'] && $piece != "Q" && !isset($_SESSION['error'])) {
             $_SESSION['error'] = 'Must play queen bee';
         }
         if (count($board) && !$this->hasNeighbour($to, $board) && !isset($_SESSION['error'])) {
