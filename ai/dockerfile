@@ -1,0 +1,8 @@
+FROM rapidfort/flaskapp:latest
+
+COPY /itvb23ows-hive-ai /ai
+WORKDIR /ai
+
+EXPOSE 5000
+
+CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]

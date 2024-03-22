@@ -19,10 +19,11 @@
     $hand = $_SESSION['hand'];
     $to = $logic->boardTiles($board);
     if(isset($_POST['play']) && !isset($_SESSION['game'])) {
-        $actions->playStone($player, $board, $hand[$player], $_POST['piece'], $_POST['to']);
+        $actions->playPiece($player, $board, $hand[$player], $_POST['piece'], $_POST['to']);
+        
     }
     if(isset($_POST['move']) && !isset($_SESSION['game'])) {
-        $actions->moveStone($player, $board, $hand[$player], $_POST['from'], $_POST['to']);
+        $actions->movePiece($player, $board, $hand[$player], $_POST['from'], $_POST['to']);
     }
     if(isset($_POST['pass']) && !isset($_SESSION['game'])) {
         $actions->passMove($player, $board, $hand[$player]);
