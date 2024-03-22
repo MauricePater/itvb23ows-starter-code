@@ -2,6 +2,8 @@
 
 namespace Hive\Game;
 
+use Hive\Game\Actions;
+
 include_once __DIR__ . '/../../vendor/autoload.php';
 
 $GLOBALS['OFFSETS'] = [[0, 1], [0, -1], [1, 0], [-1, 0], [-1, 1], [1, -1]];
@@ -329,7 +331,7 @@ class Logic{
         return $all;
     }
 
-    public function pass($player, $board, $hand) {
+    public function validPass($player, $board, $hand) {
         $to = $this->boardTiles($board);
         foreach ($to as $pos) {
             foreach ($hand as $piece => $amount) {
@@ -372,5 +374,16 @@ class Logic{
         if ($white && $black) { $_SESSION['game'] ="Draw"; }
         if ($white && !$black) { $_SESSION['game'] ="White won"; }
         if (!$white && $black) { $_SESSION['game'] ="Black won"; }
+    }
+
+    public function validUndo($board, $lastMove) {
+        $actions = new Actions();
+        if($board == []) {
+            $_SESSION['error'] ="Board is empty";
+            return;
+        }
+        if($lastMove == null) {
+            $actions->restartGame();
+        }
     }
 }

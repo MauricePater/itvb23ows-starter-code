@@ -56,7 +56,7 @@ class Actions {
 
     public function passMove($player, $board, $hand) {
         $logic = new Logic();
-        $logic->pass($player, $board, $hand);
+        $logic->validPass($player, $board, $hand);
         if (isset($_SESSION['error'])) { return; }
         $db = new Database();
         $connection = $db->getDatabase();
@@ -73,15 +73,30 @@ class Actions {
         $logic->redirect();
     }
 
-    public function undoMove() {
+    public function undoMove($board, $lastMove) {
         $logic = new Logic();
+        $logic->validUndo($board, $lastMove);
+        if (isset($_SESSION['error'])) { return; }
         $db = new Database();
         $connection = $db->getDatabase();
-        $stmt = $connection->prepare('SELECT * FROM moves WHERE id = '.$_SESSION['last_move']);
+        $stmt = $connection->prepare('SELECT * FROM moves WHERE id = '.$lastMove-1);
         $stmt->execute();
         $result = $stmt->get_result()->fetch_array();
+        if($result == null || $result[5] == null){
+            $this->restartGame();
+            return;
+        }
         $_SESSION['last_move'] = $result[5];
+        $stmt = $connection->prepare('SELECT * FROM moves WHERE id = '.($_SESSION['last_move']));
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_array();
+        if($result == null){
+            $this->restartGame();
+            return;
+        }
         $db->setState($result[6]);
+        $stmt = $connection->prepare('DELETE FROM moves WHERE id > '.$_SESSION['last_move']);
+        $stmt->execute();
         $logic->redirect();
     }
 
@@ -96,6 +111,8 @@ class Actions {
         $connection = $db->getDatabase();
         $connection->prepare('INSERT INTO games VALUES ()')->execute();
         $_SESSION['game_id'] = $connection->insert_id;
+        $stmt = $connection->prepare('DELETE FROM moves WHERE id > 0');
+        $stmt->execute();
         $logic->redirect();
     }
 

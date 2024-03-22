@@ -142,7 +142,7 @@ class LogicTest extends TestCase {
         $hand = ["Q" => 0, "B" => 0, "S" => 0, "A" => 0, "G" => 0];
         $board = ["0,0" => [[0, "Q"],[1, "B"]],
                   "0,1" => [[1, "Q"]]];
-        $logic->pass(0, $board, $hand);
+        $logic->validPass(0, $board, $hand);
         $this->assertTrue(!isset($_SESSION['error']));
     }
 
@@ -152,7 +152,7 @@ class LogicTest extends TestCase {
         $hand = ["Q" => 0, "B" => 1, "S" => 0, "A" => 0, "G" => 0];
         $board = ["0,0" => [[0, "Q"],[1, "B"]],
                   "0,1" => [[1, "Q"]]];
-        $logic->pass(0, $board, $hand);
+        $logic->validPass(0, $board, $hand);
         $this->assertTrue(isset($_SESSION['error']));
     }
 
@@ -162,7 +162,7 @@ class LogicTest extends TestCase {
         $hand = ["Q" => 0, "B" => 0, "S" => 0, "A" => 0, "G" => 0];
         $board = ["0,0" => [[0, "Q"],[0, "B"]],
                   "0,1" => [[1, "Q"]]];
-        $logic->pass(0, $board, $hand);
+        $logic->validPass(0, $board, $hand);
         $this->assertTrue(isset($_SESSION['error']));
     }
 
@@ -198,5 +198,21 @@ class LogicTest extends TestCase {
                   "0,1" => [[1, "A"]]];
         $logic->validMove(0, $board, $hand, "2,-2", "1,-1");
         $this->assertTrue(isset($_SESSION['game']));
+    }
+
+    public function testIfUnvalidUndo(): void {
+        $logic = new Logic();
+        unset($_SESSION['error']);
+        $board = [];
+        $logic->validUndo($board, null);
+        $this->assertTrue(isset($_SESSION['error']));
+    }
+
+    public function testIfValidUndo(): void {
+        $logic = new Logic();
+        unset($_SESSION['error']);
+        $board = ["0,0" => [[0, "Q"]], "1,0" => [[1, "Q"]]];
+        $logic->validUndo($board, 1);
+        $this->assertTrue(!isset($_SESSION['error']));
     }
 }

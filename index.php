@@ -32,7 +32,7 @@
         $actions->restartGame();
     }
     if(isset($_POST['undo']) && !isset($_SESSION['game'])) {
-        $actions->undoMove();
+        $actions->undoMove($board, $_SESSION['last_move']);
     }
 ?>
 <!DOCTYPE html>
