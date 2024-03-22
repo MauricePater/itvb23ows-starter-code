@@ -239,6 +239,7 @@ class Logic{
         return isset($board[$from]) ? array_push($board[$from], $tile) : $board[$from] = [$tile];
         }
         isset($board[$to]) ? array_push($board[$to], $tile) : $board[$to] = [$tile];
+        $this->endOfGame($board);
         return $board;
     }
 
@@ -346,5 +347,30 @@ class Logic{
                 }
             }
         }
+    }
+
+    public function endOfGame($board) {
+        $white = false;
+        $black = false;
+        foreach ($board as $tile => $pieces) {
+            $b = explode(',', $tile);
+            $neighbouringPieces = 0;
+            foreach ($GLOBALS['OFFSETS'] as $pq) {
+                $p = $b[0] + $pq[0];
+                $q = $b[1] + $pq[1];
+                if(isset($board[$p . "," . $q])){
+                    $neighbouringPieces += 1;
+                }
+            }
+            if ($pieces[0][0] == 0 && $pieces[0][1] == 'Q' && $neighbouringPieces == 6) {
+                $white = true;
+            }
+            if ($pieces[0][0] == 1 && $pieces[0][1] == 'Q' && $neighbouringPieces == 6) {
+                $black = true;
+            }
+        }
+        if ($white && $black) { $_SESSION['game'] ="Draw"; }
+        if ($white && !$black) { $_SESSION['game'] ="White won"; }
+        if (!$white && $black) { $_SESSION['game'] ="Black won"; }
     }
 }

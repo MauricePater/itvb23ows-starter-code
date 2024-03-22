@@ -165,4 +165,38 @@ class LogicTest extends TestCase {
         $logic->pass(0, $board, $hand);
         $this->assertTrue(isset($_SESSION['error']));
     }
+
+    public function testIfPlayerWon(): void {
+        $logic = new Logic();
+        unset($_SESSION['error']);
+        $hand = ["Q" => 0, "B" => 2, "S" => 1, "A" => 1, "G" => 3];
+        $board = ["1,1" => [[0, "Q"]],
+                  "1,-1" => [[1, "A"]],
+                  "2,0" => [[0, "A"]],
+                  "0,0" => [[1, "A"]],
+                  "0,-1" => [[0, "A"]],
+                  "1,0" => [[1, "Q"]],
+                  "2,-2" => [[0, "A"]],
+                  "0,1" => [[1, "A"]]];
+        $logic->validMove(0, $board, $hand, "2,-2", "2,-1");
+        $this->assertTrue(isset($_SESSION['game']));
+    }
+
+    public function testIfDraw(): void {
+        $logic = new Logic();
+        unset($_SESSION['error']);
+        $hand = ["Q" => 0, "B" => 2, "S" => 1, "A" => 1, "G" => 3];
+        $board = ["0,0" => [[0, "Q"]],
+                  "0,-1" => [[1, "A"]],
+                  "2,0" => [[0, "A"]],
+                  "1,1" => [[1, "A"]],
+                  "-1,0" => [[0, "A"]],
+                  "1,0" => [[1, "Q"]],
+                  "2,-2" => [[0, "A"]],
+                  "-1,1" => [[1, "G"]],
+                  "2,-1" => [[0, "G"]],
+                  "0,1" => [[1, "A"]]];
+        $logic->validMove(0, $board, $hand, "2,-2", "1,-1");
+        $this->assertTrue(isset($_SESSION['game']));
+    }
 }

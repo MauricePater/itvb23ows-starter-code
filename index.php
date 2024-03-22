@@ -18,19 +18,19 @@
     $player = $_SESSION['player'];
     $hand = $_SESSION['hand'];
     $to = $logic->boardTiles($board);
-    if(isset($_POST['play'])) {
+    if(isset($_POST['play']) && !isset($_SESSION['game'])) {
         $actions->playStone($player, $board, $hand[$player], $_POST['piece'], $_POST['to']);
     }
-    if(isset($_POST['move'])) {
+    if(isset($_POST['move']) && !isset($_SESSION['game'])) {
         $actions->moveStone($player, $board, $hand[$player], $_POST['from'], $_POST['to']);
     }
-    if(isset($_POST['pass'])) {
+    if(isset($_POST['pass']) && !isset($_SESSION['game'])) {
         $actions->passMove($player, $board, $hand[$player]);
     }
     if(isset($_POST['restart'])) {
         $actions->restartGame();
     }
-    if(isset($_POST['undo'])) {
+    if(isset($_POST['undo']) && !isset($_SESSION['game'])) {
         $actions->undoMove();
     }
 ?>
@@ -81,7 +81,9 @@
             <input type="submit" name="restart" value="Restart">
         </form>
 
-        <strong><?php if (isset($_SESSION['error'])) { echo $_SESSION['error']; unset($_SESSION['error']); } ?></strong>
+        <strong><?php if (isset($_SESSION['error'])) { echo $_SESSION['error']; unset($_SESSION['error']); }
+                      if (isset($_SESSION['game'])) { echo $_SESSION['game']; unset($_SESSION['game']); } ?>
+        </strong>
         <ol>
             <?php $view->drawMoves(); ?>
         </ol>
