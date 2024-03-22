@@ -8,7 +8,7 @@ use Hive\Database\Database;
 
 class Board{
 
-public function drawBoard($board){
+public function drawBoard($board) {
         $min_p = 1000;
         $min_q = 1000;
         foreach ($board as $pos => $tile) {
@@ -34,7 +34,7 @@ public function drawBoard($board){
         }
     }
 
-    public function drawBlack($hand){
+    public function drawBlack($hand) {
         echo "Black:";
         foreach ($hand[1] as $tile => $ct) {
             for ($i = 0; $i < $ct; $i++) {
@@ -44,7 +44,7 @@ public function drawBoard($board){
     }
 
     
-    public function drawWhite($hand){
+    public function drawWhite($hand) {
         echo "White:";
         foreach ($hand[0] as $tile => $ct) {
             for ($i = 0; $i < $ct; $i++) {
@@ -53,12 +53,12 @@ public function drawBoard($board){
         }
     }
 
-    public function turn($player){
+    public function turn($player) {
         echo "Turn:";
         if ($player == 0) { echo "White"; } else { echo "Black"; }
     }
 
-    public function drawMoves(){
+    public function drawMoves() {
         $db = new Database();
         $connection = $db->getDatabase();
         $stmt = $connection->prepare('SELECT * FROM moves WHERE game_id = '.$_SESSION['game_id']);

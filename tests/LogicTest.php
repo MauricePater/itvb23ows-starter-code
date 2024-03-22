@@ -64,12 +64,52 @@ class LogicTest extends TestCase {
         public function testIfGrasshopperJumpInvalid(): void {
         $logic = new Logic();
         unset($_SESSION['error']);
-        $hand = ["Q" => 0, "B" => 0, "S" => 1, "A" => 2, "G" => 3];
+        $hand = ["Q" => 0, "B" => 0, "S" => 1, "A" => 3, "G" => 2];
         $board = ["0,0" => [[0, "Q"]],
                   "0,1" => [[1, "Q"]],
                   "0,-1" => [[0, "G"]],
                   "0,2" => [[1, "A"]]];
-        $board = $logic->validMove(0, $board, $hand, "0,-1", "1,-1");
+        $logic->validMove(0, $board, $hand, "0,-1", "1,-1");
+        $this->assertTrue(isset($_SESSION['error']));
+    }
+
+    public function testIfAntUnlimitedSlides(): void {
+        $logic = new Logic();
+        unset($_SESSION['error']);
+        $hand = ["Q" => 0, "B" => 0, "S" => 1, "A" => 2, "G" => 3];
+        $board = ["0,0" => [[0, "Q"]],
+                  "0,1" => [[1, "Q"]],
+                  "0,-1" => [[0, "A"]],
+                  "0,2" => [[1, "A"]]];
+        $logic->validMove(0, $board, $hand, "0,-1", "1,2");
+        $this->assertTrue(!isset($_SESSION['error']));
+    }
+
+    public function testIfAntPushesPieces(): void {
+        $logic = new Logic();
+        unset($_SESSION['error']);
+        $hand = ["Q" => 0, "B" => 0, "S" => 1, "A" => 2, "G" => 3];
+        $board = ["1,1" => [[0, "Q"]],
+                  "1,-1" => [[1, "Q"]],
+                  "2,0" => [[0, "A"]],
+                  "0,0" => [[1, "A"]],
+                  "0,-1" => [[0, "A"]],
+                  "0,1" => [[1, "A"]]];
+        $logic->validMove(0, $board, $hand, "0,-1", "1,0");
+        $this->assertTrue(isset($_SESSION['error']));
+    }
+    
+    public function testIfAntIsStuck(): void {
+        $logic = new Logic();
+        unset($_SESSION['error']);
+        $hand = ["Q" => 0, "B" => 2, "S" => 1, "A" => 1, "G" => 3];
+        $board = ["1,1" => [[0, "Q"]],
+                  "1,-1" => [[1, "Q"]],
+                  "2,0" => [[0, "A"]],
+                  "0,0" => [[1, "A"]],
+                  "0,-1" => [[0, "A"]],
+                  "1,0" => [[1, "A"]]];
+        $logic->validMove(0, $board, $hand, "1,0", "0,1");
         $this->assertTrue(isset($_SESSION['error']));
     }
 }

@@ -77,7 +77,7 @@ class Logic{
         return $commonDistance <= $distance;
     }
 
-    public function grasshopperJump($board, $from, $to){
+    public function grasshopperJump($board, $from, $to) {
         $fromCoordinates = explode(',', $from);
         $toCoordinates = explode(',', $to);
 
@@ -111,7 +111,85 @@ class Logic{
         return false;
     }
 
-    public function boardTiles($board){
+    public function antSlide($board, $from, $to) {
+        $steps = [];
+        $tiles = array($from);
+
+        while (!empty($tiles)) {
+            $currentTile = array_shift($tiles);
+
+            if (!in_array($currentTile, $steps)) {
+                $steps[] = $currentTile;
+                $b = explode(',', $currentTile);
+
+                foreach ($GLOBALS['OFFSETS'] as $pq) {
+                    $p = $b[0] + $pq[0];
+                    $q = $b[1] + $pq[1];
+                    $position = $p . "," . $q;
+
+                    if (
+                        !in_array($position, $steps) &&
+                        !isset($board[$position]) &&
+                        $this->hasNeighbour($board, $position)
+                    ) {
+                        if ($position == $to) {
+                            return true;
+                        }
+                        $tiles[] = $position;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public function validMove($player, $board, $hand, $from, $to){
+        if (!isset($board[$from]) && !isset($_SESSION['error'])) {
+            $_SESSION['error'] = 'Tile is empty';
+        }
+        if ($board[$from][count($board[$from])-1][0] != $player && !isset($_SESSION['error'])) {
+            $_SESSION['error'] = "Piece is not owned by player";
+        }
+        $currentBoard = $board;
+        $tile = array_pop($board[$from]);
+        unset($board[$from]);
+        if (($tile[1] == "Q" || $tile[1] == "A" || $tile[1] == "S") &&
+        $this->checkIfPiecesArePushed($board, $from) && !isset($_SESSION['error'])) {
+            $_SESSION['error'] = "Piece is stuck";
+        }
+        $all = $this->getSplitPieces($board);
+        if (isset($board[$to]) && $tile[1] != "B" && !isset($_SESSION['error'])) {
+            $_SESSION['error'] = 'Tile is not empty';
+        }
+        if ($hand['Q'] && !isset($_SESSION['error'])) {
+            $_SESSION['error'] = "Queen bee is not played";
+        }
+        if ((!$this->hasNeighbour($to, $board) || $all) && !isset($_SESSION['error'])) {
+            $_SESSION['error'] = "Move would split hive";
+        }
+        if (($tile[1] == "Q" || $tile[1] == "A" || $tile[1] == "S") &&
+        $this->checkIfPiecesArePushed($board, $to) && !isset($_SESSION['error'])) {
+            $_SESSION['error'] = "Pieces get pushed";
+        }
+        if ($from == $to && !isset($_SESSION['error'])) {
+            $_SESSION['error'] = 'Piece must move';
+        }
+        if (($tile[1] == "Q" || $tile[1] == "B") && !$this->slide($currentBoard, $from, $to) &&
+             ($tile[1] == "A" && !$this->antSlide($currentBoard, $from, $to)) && !isset($_SESSION['error'])) {
+            $_SESSION['error'] = 'Piece must slide';
+        }
+        if (($tile[1] == "G" && !$this->grasshopperJump($board, $from, $to)) &&
+             !isset($_SESSION['error'])) {
+              $_SESSION['error'] = 'Invalid grasshopper jump';
+        }
+        if (isset($_SESSION['error'])) {
+        return isset($board[$from]) ? array_push($board[$from], $tile) : $board[$from] = [$tile];
+        }
+        isset($board[$to]) ? array_push($board[$to], $tile) : $board[$to] = [$tile];
+        return $board;
+    }
+
+    public function boardTiles($board) {
         $to = [];
         foreach ($GLOBALS['OFFSETS'] as $pq) {
             foreach (array_keys($board) as $pos) {
@@ -124,12 +202,12 @@ class Logic{
         return $to;
     }
 
-    public function redirect(){
+    public function redirect() {
         header('Location: index.php');
         exit(0);
     }
 
-    public function validPlay($player, $board, $hand, $piece, $to){
+    public function validPlay($player, $board, $hand, $piece, $to) {
         if (!$hand[$piece] && !isset($_SESSION['error'])) {
             $_SESSION['error'] = "Player does not have Piece";
         }
@@ -152,45 +230,33 @@ class Logic{
         return $board;
     }
 
-    public function validMove($player, $board, $hand, $from, $to){
-        if (!isset($board[$from]) && !isset($_SESSION['error'])) {
-            $_SESSION['error'] = 'Tile is empty';
+    public function checkIfPiecesArePushed($board, $position) {
+        $b = explode(',', $position);
+        $neighbouringTiles = [];
+        foreach ($GLOBALS['OFFSETS'] as $pq) {
+            $p = $b[0] + $pq[0];
+            $q = $b[1] + $pq[1];
+
+            $neighbouringTiles[] = $p . "," . $q;
         }
-        if ($board[$from][count($board[$from])-1][0] != $player && !isset($_SESSION['error'])) {
-            $_SESSION['error'] = "Piece is not owned by player";
+        if((isset($board[$neighbouringTiles[2]]) &&
+            isset($board[$neighbouringTiles[3]]) &&
+            isset($board[$neighbouringTiles[4]]) &&
+            isset($board[$neighbouringTiles[5]])) ||
+           (isset($board[$neighbouringTiles[0]]) &&
+            isset($board[$neighbouringTiles[1]]) &&
+            isset($board[$neighbouringTiles[2]]) &&
+            isset($board[$neighbouringTiles[3]])) ||
+           (isset($board[$neighbouringTiles[0]]) &&
+            isset($board[$neighbouringTiles[1]]) &&
+            isset($board[$neighbouringTiles[4]]) &&
+            isset($board[$neighbouringTiles[5]]))) {
+             return true;
         }
-        $currentBoard = $board;
-        $tile = array_pop($board[$from]);
-        unset($board[$from]);
-        $all = $this->getSplitPieces($board);
-        if (isset($board[$to]) && $tile[1] != "B" && !isset($_SESSION['error'])) {
-            $_SESSION['error'] = 'Tile is not empty';
-        }
-        if ($hand['Q'] && !isset($_SESSION['error'])) {
-            $_SESSION['error'] = "Queen bee is not played";
-        }
-        if ((!$this->hasNeighbour($to, $board) || $all) && !isset($_SESSION['error'])) {
-            $_SESSION['error'] = "Move would split hive";
-        }
-        if ($from == $to && !isset($_SESSION['error'])) {
-            $_SESSION['error'] = 'Piece must move';
-        }
-        if (($tile[1] == "Q" || $tile[1] == "B") && !$this->slide($currentBoard, $from, $to) &&
-             !isset($_SESSION['error'])) {
-            $_SESSION['error'] = 'Piece must slide';
-        }
-        if (($tile[1] == "G" && !$this->grasshopperJump($board, $from, $to)) &&
-             !isset($_SESSION['error'])) {
-              $_SESSION['error'] = 'Invalid grasshopper jump';
-        }
-        if (isset($_SESSION['error'])) {
-        return isset($board[$from]) ? array_push($board[$from], $tile) : $board[$from] = [$tile];
-        }
-        isset($board[$to]) ? array_push($board[$to], $tile) : $board[$to] = [$tile];
-        return $board;
+        return false;
     }
 
-    public function getSplitPieces($board){
+    public function getSplitPieces($board) {
         $all = array_keys($board);
         $queue = [array_shift($all)];
         while ($queue) {

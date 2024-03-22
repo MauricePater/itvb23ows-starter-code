@@ -10,9 +10,9 @@ use Hive\Database\Database;
 $GLOBALS['OFFSETS'] = [[0, 1], [0, -1], [1, 0], [-1, 0], [-1, 1], [1, -1]];
 define("DB_INSERT", 'insert into moves (game_id, type, move_from, move_to, previous_id, state)');
 
-class Actions{
+class Actions {
 
-    public function moveStone($player, $board, $hand, $from, $to){
+    public function moveStone($player, $board, $hand, $from, $to) {
         $logic = new Logic();
         $board = $logic->validMove($player, $board, $hand, $from, $to);
         if (isset($_SESSION['error'])) { return; }
@@ -29,7 +29,7 @@ class Actions{
         $logic->redirect();
     }
 
-    public function passMove(){
+    public function passMove() {
         $logic = new Logic();
         $db = new Database();
         $connection = $db->getDatabase();
@@ -43,7 +43,7 @@ class Actions{
         $logic->redirect();
     }
 
-    public function undoMove(){
+    public function undoMove() {
         $logic = new Logic();
         $db = new Database();
         $connection = $db->getDatabase();
@@ -55,7 +55,7 @@ class Actions{
         $logic->redirect();
     }
 
-    public function playStone($player, $board, $hand, $piece, $to){
+    public function playStone($player, $board, $hand, $piece, $to) {
         $logic = new Logic();
         $board = $logic->validPlay($player, $board, $hand, $piece, $to);
         if (isset($_SESSION['error'])) { return;}
@@ -73,7 +73,7 @@ class Actions{
         $logic->redirect();
     }
 
-    public function restartGame(){
+    public function restartGame() {
         $logic = new Logic();
         $_SESSION['board'] = [];
         $_SESSION['hand'] = [0 => ["Q" => 1, "B" => 2, "S" => 2, "A" => 3, "G" => 3],
@@ -86,7 +86,7 @@ class Actions{
         $logic->redirect();
     }
 
-    public function selectPiece($hand){
+    public function selectPiece($hand) {
         $pieces = [];
         echo "\n";
         foreach ($hand as $tile => $ct) {
@@ -99,7 +99,7 @@ class Actions{
         return $pieces;
     }
 
-    public function placePiece($hand, $player, $to, $board){
+    public function placePiece($hand, $player, $to, $board) {
         $logic = new Logic();
         $positions = [];
         echo "\n";
@@ -114,7 +114,7 @@ class Actions{
         return $positions;
     }
 
-    public function fromTile($board, $player){
+    public function fromTile($board, $player) {
         $positions = [];
         echo "\n";
         foreach (array_keys($board) as $pos) {
@@ -126,7 +126,7 @@ class Actions{
         }
         return $positions;
     }
-    public function toTile($to){
+    public function toTile($to) {
         $positions = [];
         echo "\n";
         foreach ($to as $pos) {
