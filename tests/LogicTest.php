@@ -98,7 +98,7 @@ class LogicTest extends TestCase {
         $logic->validMove(0, $board, $hand, "0,-1", "1,0");
         $this->assertTrue(isset($_SESSION['error']));
     }
-    
+
     public function testIfAntIsStuck(): void {
         $logic = new Logic();
         unset($_SESSION['error']);
@@ -110,6 +110,29 @@ class LogicTest extends TestCase {
                   "0,-1" => [[0, "A"]],
                   "1,0" => [[1, "A"]]];
         $logic->validMove(0, $board, $hand, "1,0", "0,1");
+        $this->assertTrue(isset($_SESSION['error']));
+    }
+
+    public function testIfSpiderSlide(): void {
+        $logic = new Logic();
+        unset($_SESSION['error']);
+        $hand = ["Q" => 0, "B" => 0, "S" => 1, "A" => 2, "G" => 3];
+        $board = ["0,0" => [[0, "Q"]],
+                  "0,1" => [[1, "Q"]],
+                  "0,-1" => [[0, "S"]],
+                  "0,2" => [[1, "A"]]];
+        $logic->validMove(0, $board, $hand, "0,-1", "1,1");
+        $this->assertTrue(!isset($_SESSION['error']));
+    }
+    public function testIfSpiderSlideIllegal(): void {
+        $logic = new Logic();
+        unset($_SESSION['error']);
+        $hand = ["Q" => 0, "B" => 0, "S" => 1, "A" => 2, "G" => 3];
+        $board = ["0,0" => [[0, "Q"]],
+                  "0,1" => [[1, "Q"]],
+                  "0,-1" => [[0, "S"]],
+                  "0,2" => [[1, "A"]]];
+        $logic->validMove(0, $board, $hand, "0,-1", "1,-1");
         $this->assertTrue(isset($_SESSION['error']));
     }
 }

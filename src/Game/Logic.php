@@ -130,7 +130,7 @@ class Logic{
                     if (
                         !in_array($position, $steps) &&
                         !isset($board[$position]) &&
-                        $this->hasNeighbour($board, $position)
+                        $this->hasNeighbour($position, $board)
                     ) {
                         if ($position == $to) {
                             return true;
@@ -142,6 +142,55 @@ class Logic{
         }
         return false;
     }
+
+    public function spiderSlide($board, $from, $to) {
+        $steps = [];
+        $tiles = [$from];
+        $tiles[] = null;
+        $prevTile = null;
+        $depth = 0;
+
+        while (!empty($tiles) && $depth < 3) {
+            $currentTile = array_shift($tiles);
+
+            if ($currentTile === null) {
+                $depth++;
+                $tiles[] = null;
+                if ($tiles[0] === null) {
+                    break;
+                }
+                continue;
+            }
+
+            if (!in_array($currentTile, $steps)) {
+                $steps[] = $currentTile;
+            }
+            $b = explode(',', $currentTile);
+
+            foreach ($GLOBALS['OFFSETS'] as $pq) {
+                $p = $b[0] + $pq[0];
+                $q = $b[1] + $pq[1];
+                $position = $p . "," . $q;
+
+                if (
+                    !in_array($position, $steps) &&
+                    $position !== $prevTile &&
+                    !isset($board[$position]) &&
+                    $this->hasNeighbour($position, $board)
+                ) {
+                    if ($position === $to && $depth === 2) {
+                        return true;
+                    }
+                    $tiles[] = $position;
+                }
+            }
+
+            $prevTile = $currentTile;
+        }
+
+        return false;
+    }
+
 
     public function validMove($player, $board, $hand, $from, $to){
         if (!isset($board[$from]) && !isset($_SESSION['error'])) {
@@ -177,6 +226,10 @@ class Logic{
         if (($tile[1] == "Q" || $tile[1] == "B") && !$this->slide($currentBoard, $from, $to) &&
              ($tile[1] == "A" && !$this->antSlide($currentBoard, $from, $to)) && !isset($_SESSION['error'])) {
             $_SESSION['error'] = 'Piece must slide';
+        }
+        if (($tile[1] == "S" && !$this->spiderSlide($board, $from, $to)) &&
+             !isset($_SESSION['error'])) {
+              $_SESSION['error'] = 'Invalid spider slide';
         }
         if (($tile[1] == "G" && !$this->grasshopperJump($board, $from, $to)) &&
              !isset($_SESSION['error'])) {
