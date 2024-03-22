@@ -25,7 +25,7 @@
         $actions->moveStone($player, $board, $hand[$player], $_POST['from'], $_POST['to']);
     }
     if(isset($_POST['pass'])) {
-        $actions->passMove();
+        $actions->passMove($player, $board, $hand[$player]);
     }
     if(isset($_POST['restart'])) {
         $actions->restartGame();

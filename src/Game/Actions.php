@@ -29,8 +29,9 @@ class Actions {
         $logic->redirect();
     }
 
-    public function passMove() {
+    public function passMove($player, $board, $hand) {
         $logic = new Logic();
+        $logic->pass($player, $board, $hand);
         $db = new Database();
         $connection = $db->getDatabase();
         $values = 'values (?, "pass", null, null, ?, ?)';

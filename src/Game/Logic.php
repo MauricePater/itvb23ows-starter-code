@@ -327,4 +327,24 @@ class Logic{
         }
         return $all;
     }
+
+    public function pass($player, $board, $hand) {
+        $to = $this->boardTiles($board);
+        foreach ($to as $pos) {
+            foreach ($hand as $piece => $amount) {
+                if ($amount > 0 && $this->validPlay($player, $board, $hand, $piece, $pos)) {
+                     $_SESSION['error'] ="Play is still possible";
+                    return;
+                }
+            }
+        }
+        foreach ($board as $tile => $pieces) {
+            foreach ($to as $pos) {
+                if (end($pieces)[0] == $player && $this->validMove($player, $board, $hand, $tile, $pos)) {
+                    $_SESSION['error'] ="Move is still possible";
+                    return;
+                }
+            }
+        }
+    }
 }

@@ -135,4 +135,34 @@ class LogicTest extends TestCase {
         $logic->validMove(0, $board, $hand, "0,-1", "1,-1");
         $this->assertTrue(isset($_SESSION['error']));
     }
+
+    public function testIfCanPass(): void {
+        $logic = new Logic();
+        unset($_SESSION['error']);
+        $hand = ["Q" => 0, "B" => 0, "S" => 0, "A" => 0, "G" => 0];
+        $board = ["0,0" => [[0, "Q"],[1, "B"]],
+                  "0,1" => [[1, "Q"]]];
+        $logic->pass(0, $board, $hand);
+        $this->assertTrue(!isset($_SESSION['error']));
+    }
+
+    public function testIfCanStillPlace(): void {
+        $logic = new Logic();
+        unset($_SESSION['error']);
+        $hand = ["Q" => 0, "B" => 1, "S" => 0, "A" => 0, "G" => 0];
+        $board = ["0,0" => [[0, "Q"],[1, "B"]],
+                  "0,1" => [[1, "Q"]]];
+        $logic->pass(0, $board, $hand);
+        $this->assertTrue(isset($_SESSION['error']));
+    }
+
+    public function testIfCanStillMove(): void {
+        $logic = new Logic();
+        unset($_SESSION['error']);
+        $hand = ["Q" => 0, "B" => 0, "S" => 0, "A" => 0, "G" => 0];
+        $board = ["0,0" => [[0, "Q"],[0, "B"]],
+                  "0,1" => [[1, "Q"]]];
+        $logic->pass(0, $board, $hand);
+        $this->assertTrue(isset($_SESSION['error']));
+    }
 }
